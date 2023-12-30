@@ -1,0 +1,58 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: Go
+
+on:
+  workflow_dispatch:
+    inputs:
+      language:
+        description: 'The programming language to use'
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Fetch Go Program Repository
+      run: git clone https://github.com/iamnihal/gh-archive.git gh-archive
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21.3'
+
+    - name: Build
+      run: go build -v -o main .
+      working-directory: ./gh-archive
+
+    - name: Run
+      run: ./gh-archive/main -t "${{ github.event.inputs.language }}" -n 21 -l ./gh-archive/output.txt
+
+    - name: CWD
+      run: pwd
+      
+    - name: List files
+      run: ls -R ./gh-archive
+      
+    - name: Save Output
+      uses: actions/upload-artifact@v2
+      with:
+        name: go-output
+        path: ./gh-archive/output.txt
+
+  access-artifact:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download Artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: go-output
+        path: ./downloaded-artifact
+
+    - name: Print Contents
+      run: |
+        cat ./downloaded-artifact/output.txt
