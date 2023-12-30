@@ -10,7 +10,7 @@ on:
       language:
         description: 'The programming language to use'
         required: true
-      run-id:
+      run_id:
         description: 'Unique identifier for Workflow'
         required: true
 
