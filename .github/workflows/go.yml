@@ -10,6 +10,9 @@ on:
       language:
         description: 'The programming language to use'
         required: true
+      repo:
+        description: 'Number of repositories to check'
+        required: false
       run_id:
         description: 'Unique identifier for Workflow'
         required: true
@@ -33,7 +36,7 @@ jobs:
       working-directory: ./gh-archive
 
     - name: Run
-      run: ./gh-archive/main -t "${{ github.event.inputs.language }}" -n 21 -o ./gh-archive/output.txt
+      run: ./gh-archive/main -t "${{ github.event.inputs.language }}" -n "${{ github.event.inputs.repo }}" -o ./gh-archive/output.txt
 
     - name: CWD
       run: pwd
